@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+    <Product>UI Tweaks</Product>
+    <Version>0.1.0</Version>
+    <Company>https://github.com/cgytrus/CalUiTweaks</Company>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="libs\Assembly-CSharp.dll" />
+    <Content Include="libs\CalApi.dll" />
+    <Content Include="libs\MMHOOK_Assembly-CSharp.dll" />
+    <Content Include="libs\UnityEngine.UI.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>libs\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="CalApi, Version=0.2.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>libs\CalApi.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Facepunch.Steamworks.Posix64, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>libs\Facepunch.Steamworks.Posix64.dll</HintPath>
+      <Private>False</Private>
+      <Aliases>SteamworksPosix64</Aliases>
+    </Reference>
+    <Reference Include="Facepunch.Steamworks.Win64, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>libs\Facepunch.Steamworks.Win64.dll</HintPath>
+      <Private>False</Private>
+      <Aliases>SteamworksWin64</Aliases>
+    </Reference>
+    <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>libs\MMHOOK_Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>libs\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.0.7" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.4.16" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.1.0" />
+    <PackageReference Include="UnityEngine.Modules" Version="2018.4.36" IncludeAssets="compile" />
+  </ItemGroup>
+</Project>
