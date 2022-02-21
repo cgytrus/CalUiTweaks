@@ -2,12 +2,14 @@
 
 using HarmonyLib;
 
+using JetBrains.Annotations;
+
 using UnityEngine;
 
 namespace CalUiTweaks.Patches.Gameplay;
 
-// ReSharper disable once UnusedType.Global
-public class CatHealthDisplayPatch : ConfigurablePatch {
+[UsedImplicitly]
+internal class CatHealthDisplayPatch : ConfigurablePatch {
     public CatHealthDisplayPatch() : base(CalUiTweaksPlugin.instance!.Config, "Gameplay", "CatHealthDisplay",
         true, null) { }
 

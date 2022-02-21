@@ -4,12 +4,14 @@ using System.IO;
 using CalApi.API;
 using CalApi.Patches;
 
+using JetBrains.Annotations;
+
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace CalUiTweaks.Patches.TitleScreen;
 
-// ReSharper disable once UnusedType.Global
+[UsedImplicitly]
 internal class CustomizableTitlePatch : IPatch {
     private const string RootName = "Title Screen";
     private const string ReadmeName = "CustomizeableTitle-README.txt";

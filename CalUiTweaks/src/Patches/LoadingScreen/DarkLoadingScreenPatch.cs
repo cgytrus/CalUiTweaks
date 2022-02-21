@@ -2,14 +2,16 @@
 
 using HarmonyLib;
 
+using JetBrains.Annotations;
+
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace CalUiTweaks.Patches.LoadingScreen;
 
-// ReSharper disable once UnusedType.Global
-internal class DarkLoadingScreen : ConfigurablePatch {
-    public DarkLoadingScreen() : base(CalUiTweaksPlugin.instance!.Config, "LoadingScreen", "Dark", false, "") { }
+[UsedImplicitly]
+internal class DarkLoadingScreenPatch : ConfigurablePatch {
+    public DarkLoadingScreenPatch() : base(CalUiTweaksPlugin.instance!.Config, "LoadingScreen", "Dark", false, "") { }
 
     public override void Apply() => On.Intro.Awake += (orig, self) => {
         orig(self);

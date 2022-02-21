@@ -5,9 +5,11 @@ using CalApi.Patches;
 
 using HarmonyLib;
 
+using JetBrains.Annotations;
+
 namespace CalUiTweaks.Patches.LoadingScreen;
 
-// ReSharper disable once UnusedType.Global
+[UsedImplicitly]
 internal class NoStartupWarningPatch : ConfigurablePatch {
     private static readonly Action<SetupUI> loadIntro =
         (Action<SetupUI>)Delegate.CreateDelegate(typeof(Action<SetupUI>),

@@ -8,13 +8,15 @@ using CalApi.Patches;
 
 using HarmonyLib;
 
+using JetBrains.Annotations;
+
 using UnityEngine;
 using UnityEngine.Video;
 
 namespace CalUiTweaks.Patches.TitleScreen;
 
-// ReSharper disable once UnusedType.Global
-public class CustomMenusBackgroundPatch : IPatch {
+[UsedImplicitly]
+internal class CustomMenusBackgroundPatch : IPatch {
     private const string RootName = "Menus";
     private const string ReadmeName = "CustomMenusBackground-README.txt";
     private const string BackgroundName = "background.txt";

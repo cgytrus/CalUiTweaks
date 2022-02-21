@@ -4,6 +4,8 @@ using CalApi.Patches;
 
 using HarmonyLib;
 
+using JetBrains.Annotations;
+
 using Mono.Cecil.Cil;
 
 using MonoMod.Cil;
@@ -14,14 +16,13 @@ using UnityEngine.SceneManagement;
 
 namespace CalUiTweaks.Patches.LoadingScreen;
 
-// ReSharper disable once UnusedType.Global
-internal class NonBlockingLoadingScreen : IPatch {
-    // ReSharper disable once UnusedMember.Local
-    private enum LoadingMode { LoadAfterAnimation, LoadWhileAnimatingAndWait, LoadWhileAnimating }
+[UsedImplicitly]
+internal class NonBlockingLoadingScreenPatch : IPatch {
+    private enum LoadingMode { LoadAfterAnimation, [UsedImplicitly] LoadWhileAnimatingAndWait, LoadWhileAnimating }
 
     private readonly ConfigEntry<LoadingMode> _loadingMode;
 
-    public NonBlockingLoadingScreen() => _loadingMode = CalUiTweaksPlugin.instance!.Config.Bind("LoadingScreen",
+    public NonBlockingLoadingScreenPatch() => _loadingMode = CalUiTweaksPlugin.instance!.Config.Bind("LoadingScreen",
         "LoadingMode", LoadingMode.LoadAfterAnimation, @"How and when is the game actually loading.
 Load After Animation - only load after the animation has finished (vanilla behavior)
 Load While Animating And Wait - load while the animation is playing and wait for the animation to finish before switching to the main menu

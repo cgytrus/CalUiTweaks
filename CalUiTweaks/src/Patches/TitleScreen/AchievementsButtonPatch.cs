@@ -5,6 +5,8 @@ using CalApi.Patches;
 
 using HarmonyLib;
 
+using JetBrains.Annotations;
+
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 
@@ -12,8 +14,8 @@ using UnityEngine;
 
 namespace CalUiTweaks.Patches.TitleScreen;
 
-// ReSharper disable once UnusedType.Global
-public class AchievementsButtonPatch : ConfigurablePatch {
+[UsedImplicitly]
+internal class AchievementsButtonPatch : ConfigurablePatch {
     public AchievementsButtonPatch() : base(CalUiTweaksPlugin.instance!.Config, "TitleScreen", "AchievementsButton",
         false, "There is a hidden achievements button that does nothing.\nRequires restart to take effect.") { }
 

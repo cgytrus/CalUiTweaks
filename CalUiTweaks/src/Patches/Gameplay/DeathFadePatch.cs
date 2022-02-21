@@ -1,9 +1,11 @@
 ﻿using CalApi.Patches;
 
+using JetBrains.Annotations;
+
 namespace CalUiTweaks.Patches.Gameplay;
 
-// ReSharper disable once UnusedType.Global
-public class DeathFadePatch : ConfigurablePatch {
+[UsedImplicitly]
+internal class DeathFadePatch : ConfigurablePatch {
     public DeathFadePatch() : base(CalUiTweaksPlugin.instance!.Config, "Gameplay", "DeathFade",
         true, "Toggle the fade to white on death.") { }
 
