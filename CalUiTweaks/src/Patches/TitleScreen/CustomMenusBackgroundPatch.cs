@@ -17,12 +17,10 @@ namespace CalUiTweaks.Patches.TitleScreen;
 public class CustomMenusBackgroundPatch : IPatch {
     private const string RootName = "Menus";
     private const string ReadmeName = "CustomMenusBackground-README.txt";
-    private const string BackgroundVideoName = "titleBg.mp4";
     private const string BackgroundName = "background.txt";
 
     private static string? _rootPath;
-    private static string? _videoBackgroundPath;
-    private static int _forceTheme;
+    private static string? _videoBackgroundName;
     private static bool _backgroundElements;
     private static VideoAspectRatio _aspectRatio;
 
@@ -35,11 +33,6 @@ public class CustomMenusBackgroundPatch : IPatch {
     private static AudioSource? _audio;
 
     public void Apply() {
-        On.ThemeSystem.Awake += (orig, self) => {
-            orig(self);
-            ThemeSystem.ApplyTheme(_forceTheme);
-        };
-
         BackgroundElements? backgroundElements = null;
         FloaterContainer? floaterContainer = null;
 
@@ -59,13 +52,12 @@ public class CustomMenusBackgroundPatch : IPatch {
             Update();
         };
 
-        UpdateSettings(RootName, BackgroundVideoName, BackgroundName);
+        UpdateSettings(RootName, BackgroundName);
         CustomizationProfiles.profileChanged += (_, _) => {
             LeaveBackground(backgroundElements, floaterContainer);
-            UpdateSettings(RootName, BackgroundVideoName, BackgroundName);
+            UpdateSettings(RootName, BackgroundName);
             CreateBackgroundContainer();
             EnterBackground(_backgroundContainer!, ref backgroundElements, ref floaterContainer);
-            ThemeSystem.ApplyTheme(_forceTheme);
         };
 
         Directory.CreateDirectory(Path.Combine(CustomizationProfiles.defaultPath, RootName));
@@ -74,10 +66,9 @@ public class CustomMenusBackgroundPatch : IPatch {
 
     private static void CreateReadme(string path) {
         if(File.Exists(path)) return;
-        File.WriteAllText(path, @"If a file named `titleBg.mp4` exists, it will be shown as the background instead of the default one.
+        File.WriteAllText(path, $@"If a file named `titleBg.mp4` exists, it will be shown as the background instead of the default one.
 background.txt contains some settings about the background:
-line 1: theme - the ID of the theme which you can select in the editor
-  you can get it by counting where is it in the list and subtracting 1, for example World 1 theme would have an ID of 0
+line 1: video file name | default: titleBg.mp4
 line 2: background elements - fog and vignette (possible values: true, false | default: true) (*not* case sensitive)
 line 3: video aspect ratio - https://docs.unity3d.com/2018.4/Documentation/ScriptReference/Video.VideoAspectRatio.html | default: no idea
 if a line is left blank or doesn't exist in the file at all, the default value would be used");
@@ -90,9 +81,8 @@ if a line is left blank or doesn't exist in the file at all, the default value w
         _backgroundContainer.transform.SetAsFirstSibling();
     }
 
-    private static void UpdateSettings(string rootName, string videoName, string backgroundName) {
+    private static void UpdateSettings(string rootName, string backgroundName) {
         _rootPath = Path.Combine(CustomizationProfiles.currentPath!, rootName);
-        _videoBackgroundPath = Path.Combine(_rootPath, videoName);
         string backgroundPath = Path.Combine(_rootPath, backgroundName);
         ResetSettings();
         if(!File.Exists(backgroundPath)) return;
@@ -100,14 +90,15 @@ if a line is left blank or doesn't exist in the file at all, the default value w
     }
 
     private static void ResetSettings() {
-        _forceTheme = -1;
+        _videoBackgroundName = "titleBg.mp4";
         _backgroundElements = true;
         _aspectRatio = VideoAspectRatio.FitHorizontally;
     }
 
     [SuppressMessage("ReSharper", "InvertIf")]
     private static void ParseSettings(IReadOnlyList<string> settings) {
-        if(settings.Count >= 1 && int.TryParse(settings[0], out int theme)) _forceTheme = theme;
+        if(settings.Count >= 1 && !string.IsNullOrWhiteSpace(settings[0]) && _rootPath is not null)
+            _videoBackgroundName = settings[0];
         if(settings.Count >= 2 && bool.TryParse(settings[1], out bool bgElements)) _backgroundElements = bgElements;
         if(settings.Count >= 3 && Enum.TryParse(settings[2], true, out VideoAspectRatio ar)) {
             _aspectRatio = ar;
@@ -117,7 +108,7 @@ if a line is left blank or doesn't exist in the file at all, the default value w
 
     private static void EnterBackground(GameObject parent, ref BackgroundElements? backgroundElements,
         ref FloaterContainer? floaterContainer) {
-        if(!_wasUnloaded) return;
+        if(!_wasUnloaded || _rootPath is null || _videoBackgroundName is null) return;
         _wasUnloaded = false;
 
         backgroundElements = backgroundElements ? backgroundElements :
@@ -125,11 +116,12 @@ if a line is left blank or doesn't exist in the file at all, the default value w
         floaterContainer = floaterContainer ? floaterContainer :
             (FloaterContainer)AccessTools.Field(typeof(FloaterContainer), "instance").GetValue(null);
 
-        if(File.Exists(_videoBackgroundPath)) {
+        string backgroundPath = Path.Combine(_rootPath, _videoBackgroundName);
+        if(File.Exists(backgroundPath)) {
             floaterContainer!.gameObject.SetActive(false);
             if(!_videoBackground) CreateVideoBackground(parent);
             _videoBackground!.enabled = true;
-            LoadVideoBackground(_videoBackgroundPath!);
+            LoadVideoBackground(backgroundPath);
         }
 
         backgroundElements!.gameObject.SetActive(_backgroundElements);
