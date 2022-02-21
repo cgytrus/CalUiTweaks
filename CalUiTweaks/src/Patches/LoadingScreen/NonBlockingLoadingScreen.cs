@@ -44,12 +44,12 @@ Load While Animating - load while the animation is playing and switch to the mai
                 ILCursor cursor = new(il);
                 cursor.GotoNext(code => code.MatchCall<SceneManager>("LoadScene"));
                 cursor.Index++; // the last instruction
-                ILLabel endLabel = cursor.DefineLabel();
-                cursor.Index -= 4; // before the LoadScene call
+                ILLabel endLabel = cursor.MarkLabel();
+                cursor.Index -= 3; // before the LoadScene call
 
                 // loadingScene.allowSceneActivation = true;
-                cursor.Emit(OpCodes.Ldc_I4_1);
                 cursor.EmitReference(loadingScene);
+                cursor.Emit(OpCodes.Ldc_I4_1);
                 cursor.Emit<AsyncOperation>(OpCodes.Call, $"set_{nameof(loadingScene.allowSceneActivation)}");
 
                 // if(_loadingMode.Value == LoadingMode.LoadAfterAnimation) return;
