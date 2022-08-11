@@ -1,31 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
     <Product>UI Tweaks</Product>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Company>https://github.com/cgytrus/CalUiTweaks</Company>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="libs\Assembly-CSharp.dll" />
     <Content Include="libs\CalApi.dll" />
     <Content Include="libs\MMHOOK_Assembly-CSharp.dll" />
     <Content Include="libs\UnityEngine.UI.dll" />
   </ItemGroup>
+
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>libs\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="CalApi, Version=0.2.7.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="CalApi, Version=0.2.8.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>libs\CalApi.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -48,10 +45,12 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.Core" Version="5.4.17" />
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.1.0" />
     <PackageReference Include="UnityEngine.Modules" Version="2018.4.36" IncludeAssets="compile" />
   </ItemGroup>
+
 </Project>

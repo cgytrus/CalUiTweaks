@@ -5,7 +5,7 @@ using CalApi.API;
 namespace CalUiTweaks;
 
 [BepInPlugin("mod.cgytrus.plugins.calUiTweaks", PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-[BepInDependency("mod.cgytrus.plugins.calapi", "0.2.7")]
+[BepInDependency("mod.cgytrus.plugins.calapi", "0.2.8")]
 public class CalUiTweaksPlugin : BaseUnityPlugin {
     public static CalUiTweaksPlugin? instance { get; private set; }
 
