@@ -12,50 +12,30 @@ using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace CalUiTweaks.Patches.LoadingScreen;
 
 [UsedImplicitly]
 internal class NonBlockingLoadingScreenPatch : IPatch {
-    private enum LoadingMode { LoadAfterAnimation, [UsedImplicitly] LoadWhileAnimatingAndWait, LoadWhileAnimating }
+    private readonly ConfigEntry<bool> _waitForAnimation;
 
-    private readonly ConfigEntry<LoadingMode> _loadingMode;
-
-    public NonBlockingLoadingScreenPatch() => _loadingMode = CalUiTweaksPlugin.instance!.Config.Bind("LoadingScreen",
-        "LoadingMode", LoadingMode.LoadAfterAnimation, @"How and when is the game actually loading.
-Load After Animation - only load after the animation has finished (vanilla behavior)
-Load While Animating And Wait - load while the animation is playing and wait for the animation to finish before switching to the main menu
-Load While Animating - load while the animation is playing and switch to the main menu immediately when loaded");
+    public NonBlockingLoadingScreenPatch() => _waitForAnimation = CalUiTweaksPlugin.instance!.Config.Bind("LoadingScreen",
+        "WaitForAnimation", true, @"Whether to wait for the animation to finish when loading the game.
+Enabled - wait for the animation to finish before switching to the main menu (vanilla behavior)
+Disabled - switch to the main menu immediately when loaded");
 
     public void Apply() {
-        AsyncOperation? loadingScene = null;
-        On.Intro.LoadGame += (orig, self) => {
-            if(_loadingMode.Value == LoadingMode.LoadAfterAnimation) return orig(self);
-            string gameSceneName = (string)AccessTools.Field(typeof(Intro), "gameSceneName").GetValue(self);
-            loadingScene = SceneManager.LoadSceneAsync(gameSceneName);
-            loadingScene.allowSceneActivation = _loadingMode.Value == LoadingMode.LoadWhileAnimating;
-            return orig(self);
-        };
-
-        // if _loadingMode.Value isn't 0 (which is the default, vanilla behavior),
-        // we skip the LoadScene call because we already called it before the coroutine
         IDetour loadGameDetour =
-            new ILHook(AccessTools.Method(AccessTools.TypeByName("<LoadGame>d__7"), "MoveNext"), il => {
+            new ILHook(AccessTools.Method(AccessTools.TypeByName("<LoadGame>d__8"), "MoveNext"), il => {
                 ILCursor cursor = new(il);
-                cursor.GotoNext(code => code.MatchCall<SceneManager>("LoadScene"));
-                cursor.Index++; // the last instruction
-                ILLabel endLabel = cursor.MarkLabel();
-                cursor.Index -= 3; // before the LoadScene call
 
-                // loadingScene.allowSceneActivation = true;
-                cursor.EmitReference(loadingScene);
-                cursor.Emit(OpCodes.Ldc_I4_1);
-                cursor.Emit<AsyncOperation>(OpCodes.Call, $"set_{nameof(loadingScene.allowSceneActivation)}");
-
-                // if(_loadingMode.Value == LoadingMode.LoadAfterAnimation) return;
-                cursor.EmitReference((int)_loadingMode.Value);
-                cursor.Emit(OpCodes.Brtrue, endLabel);
+                // allowSceneActivation.allowSceneActivation = !_waitForAnimation.Value;
+                cursor.GotoNext(code =>
+                    code.MatchCallvirt<AsyncOperation>($"set_{nameof(AsyncOperation.allowSceneActivation)}"));
+                cursor.Index--;
+                cursor.EmitReference(_waitForAnimation.Value);
+                cursor.Index++;
+                cursor.Emit(OpCodes.Ceq);
             });
         loadGameDetour.Apply();
     }
